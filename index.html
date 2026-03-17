@@ -52,7 +52,7 @@
         <div class="bg-stone-100 px-6 py-4 border-b border-stone-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <i data-lucide="sparkles" class="text-stone-600"></i>
-                <h1 class="text-xl font-medium tracking-wider text-stone-700">QIYI Crystal 能量文案生成器 <span class="text-sm text-stone-400">v9.3 終極除錯版</span></h1>
+                <h1 class="text-xl font-medium tracking-wider text-stone-700">QIYI Crystal 能量文案生成器 <span class="text-sm text-stone-400">v9.4 智慧備援版</span></h1>
             </div>
             
             <!-- API Key 安全輸入區塊 -->
@@ -302,7 +302,7 @@
             window.getSelection().removeAllRanges();
         }
 
-        // 強化錯誤解析，確保能抓到被廣告軟體擋下的錯誤
+        // 強化錯誤解析機制，不再針對 400/404 進行無效等待
         async function fetchWithRetry(url, options, retries = 5) {
             let delay = 1000;
             for (let i = 0; i < retries; i++) {
@@ -318,10 +318,16 @@
                         } catch (parseErr) {
                             // 若無法解析 json 則忽略
                         }
-                        throw new Error(errorMsg);
+                        const error = new Error(errorMsg);
+                        error.status = response.status;
+                        throw error;
                     }
                     return await response.json();
                 } catch (e) {
+                    // 如果是找不到模型(404)或格式不符(400)，直接拋出不要浪費時間重試
+                    if (e.status === 400 || e.status === 404) {
+                        throw e;
+                    }
                     console.warn(`Fetch 嘗試 ${i+1} 失敗:`, e);
                     if (i === retries - 1) throw e;
                     await new Promise(res => setTimeout(res, delay));
@@ -344,14 +350,16 @@
             const crystalType = document.getElementById('crystalType').value.trim() || '請推薦一款適合該情境的特色礦石。';
             const ctaText = document.getElementById('ctaText').value.trim();
 
-            // 判斷是否為預覽環境
+            // 判斷是否為內建預覽環境
             const isPreviewEnv = window.location.hostname.includes('usercontent.goog') || window.location.href.startsWith('blob:');
             
-            let finalModel = 'gemini-1.5-flash'; 
             let finalApiKey = document.getElementById('geminiApiKey').value.trim();
+            
+            // 🌟 多重模型備援清單：從最新 2.5 到最穩定的 pro 模型 🌟
+            let modelsToTry = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'];
 
             if (isPreviewEnv) {
-                finalModel = 'gemini-2.5-flash-preview-09-2025';
+                modelsToTry = ['gemini-2.5-flash-preview-09-2025'];
                 finalApiKey = ''; 
             } else {
                 if (!finalApiKey) {
@@ -435,19 +443,44 @@ ${structureRules}`;
             }
 
             try {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/${finalModel}:generateContent?key=${finalApiKey}`;
-                
+                let data = null;
+                let lastError = null;
+
                 const payload = {
                     contents: [{ role: "user", parts: [{ text: userPromptText }] }],
                     systemInstruction: { role: "system", parts: [{ text: systemPrompt }] },
                     generationConfig: { temperature: 0.8 } 
                 };
 
-                const data = await fetchWithRetry(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+                // 🌟 智慧備援迴圈：自動測試清單中的模型，直到成功為止 🌟
+                for (const modelName of modelsToTry) {
+                    try {
+                        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${finalApiKey}`;
+                        
+                        data = await fetchWithRetry(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        
+                        // 若成功獲取資料，跳出測試迴圈
+                        if (data) break; 
+
+                    } catch (e) {
+                        lastError = e;
+                        console.warn(`模型 ${modelName} 測試失敗:`, e.message);
+                        
+                        // 如果錯誤是金鑰無效(通常為 400 API key not valid 等)，則不要再試其他模型了，直接報錯
+                        if (e.status !== 404 && e.status !== 400 && !e.message.includes('not found') && !e.message.includes('supported')) {
+                            throw e; 
+                        }
+                    }
+                }
+
+                // 如果跑完所有模型都失敗，拋出最後一次的錯誤
+                if (!data) {
+                    throw lastError; 
+                }
 
                 if (data && data.candidates && data.candidates[0].content.parts[0].text) {
                     let generatedContent = data.candidates[0].content.parts[0].text;
@@ -476,9 +509,12 @@ ${structureRules}`;
                 
                 let errorMsg = error.message || String(error);
                 
-                // 針對被防護軟體擋下的 TypeError (Failed to fetch) 做出明確指引
                 if (errorMsg.includes('Failed to fetch') || errorMsg.includes('NetworkError')) {
-                    errorMsg = `無法連線到 Google AI 伺服器 (Failed to fetch)。\n\n👉 解決方案：\n1. 請檢查您的瀏覽器是否有安裝「阻擋廣告外掛」(如 AdBlock) 或防護盾 (如 Brave)，它會阻擋 Google API 的連線，請【暫時關閉】它。\n2. 請確認您的網路連線正常。`;
+                    errorMsg = `無法連線到 Google AI 伺服器。\n\n👉 解決方案：\n1. 請檢查您的瀏覽器是否有安裝「阻擋廣告外掛」(如 AdBlock) 或防護盾 (如 Brave)，它會阻擋連線，請【暫時關閉】它。\n2. 請確認您的網路連線正常。`;
+                } else if (errorMsg.includes('API key not valid')) {
+                    errorMsg = `API Key 金鑰無效。\n\n👉 解決方案：請確認您複製的 Gemini API Key 是否完整，並重新在右上角貼上儲存。`;
+                } else if (errorMsg.includes('not found')) {
+                    errorMsg = `您申請的 API 金鑰專案可能尚未開通最新的 AI 模型權限，請稍後再試或更換金鑰。`;
                 }
 
                 showError(errorMsg);
