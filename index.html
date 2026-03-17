@@ -52,7 +52,7 @@
         <div class="bg-stone-100 px-6 py-4 border-b border-stone-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <i data-lucide="sparkles" class="text-stone-600"></i>
-                <h1 class="text-xl font-medium tracking-wider text-stone-700">QIYI Crystal 能量文案生成器 <span class="text-sm text-stone-400">v9.1 安全串接版</span></h1>
+                <h1 class="text-xl font-medium tracking-wider text-stone-700">QIYI Crystal 能量文案生成器 <span class="text-sm text-stone-400">v9.2 穩定模型版</span></h1>
             </div>
             
             <!-- 新增：API Key 安全輸入區塊 -->
@@ -415,7 +415,8 @@ ${structureRules}`;
             }
 
             try {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                // 將模型改為目前免費額度最廣、最穩定且支援一般 API Key 的 gemini-1.5-flash
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
                 
                 const payload = {
                     contents: [{ parts: [{ text: userPromptText }] }],
