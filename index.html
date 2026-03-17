@@ -9,32 +9,16 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
         
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background-color: #F9F8F6; 
-            color: #3E3E3E; 
-        }
-
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #F9F8F6; color: #3E3E3E; }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
-
-        .input-focus-ring:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(139, 130, 118, 0.3);
-            border-color: #8B8276;
-        }
-
+        .input-focus-ring:focus { outline: none; box-shadow: 0 0 0 2px rgba(139, 130, 118, 0.3); border-color: #8B8276; }
         .tag-btn { transition: all 0.2s ease; }
         .tag-btn:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-
-        .result-textarea {
-            line-height: 1.8;
-            letter-spacing: 0.02em;
-            resize: none;
-        }
-
+        .result-textarea { line-height: 1.8; letter-spacing: 0.02em; resize: none; }
+        
         .loader-dots div { animation-timing-function: cubic-bezier(0, 1, 1, 0); }
         .loader-dots div:nth-child(1) { left: 8px; animation: loader-dots1 0.6s infinite; }
         .loader-dots div:nth-child(2) { left: 8px; animation: loader-dots2 0.6s infinite; }
@@ -52,10 +36,9 @@
         <div class="bg-stone-100 px-6 py-4 border-b border-stone-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <i data-lucide="sparkles" class="text-stone-600"></i>
-                <h1 class="text-xl font-medium tracking-wider text-stone-700">QIYI Crystal 能量文案生成器 <span class="text-sm text-stone-400">v9.1 安全串接版</span></h1>
+                <h1 class="text-xl font-medium tracking-wider text-stone-700">QIYI Crystal 能量文案生成器 <span class="text-sm text-stone-400">v9.2 穩定版</span></h1>
             </div>
             
-            <!-- 新增：API Key 安全輸入區塊 -->
             <div class="flex items-center gap-2 w-full sm:w-auto">
                 <i data-lucide="key" class="w-4 h-4 text-stone-500 hidden sm:block"></i>
                 <input type="password" id="geminiApiKey" placeholder="輸入 Gemini API Key" class="text-xs p-2 border border-stone-200 rounded-md bg-white w-full sm:w-48 focus:outline-none focus:border-stone-400 input-focus-ring">
@@ -94,9 +77,7 @@
                         <p class="text-xs text-stone-500 mb-3 font-medium flex items-center gap-1">
                             <i data-lucide="tags" class="w-4 h-4"></i> 快捷狀態標籤
                         </p>
-                        
                         <div class="space-y-4 max-h-56 overflow-y-auto pr-2">
-                            <!-- 知識科普 -->
                             <div class="bg-white p-3 rounded border border-stone-100 shadow-sm">
                                 <span class="text-xs font-bold text-stone-500 block mb-2">🔍 知識科普</span>
                                 <div class="flex flex-wrap gap-2">
@@ -106,7 +87,6 @@
                                 </div>
                             </div>
                             
-                            <!-- 情境一：職場與人際消耗 -->
                             <div>
                                 <span class="text-xs text-stone-400 block mb-1">💼 情境一：職場與人際消耗</span>
                                 <div class="flex flex-wrap gap-2">
@@ -117,18 +97,16 @@
                                 </div>
                             </div>
 
-                            <!-- 情境二：睡眠與內在焦慮 -->
                             <div>
                                 <span class="text-xs text-stone-400 block mb-1">🌙 情境二：睡眠與內在焦慮</span>
                                 <div class="flex flex-wrap gap-2">
                                     <button onclick="fillState('晚上躺在床上，腦袋還在開無數個視窗、無法關機的深夜失眠者')" class="tag-btn text-xs bg-white border border-stone-200 text-stone-600 px-2.5 py-1.5 rounded">深夜腦袋轉不停</button>
                                     <button onclick="fillState('很容易受別人情緒影響，別人一嘆氣你就跟著緊張的高敏感族群')" class="tag-btn text-xs bg-white border border-stone-200 text-stone-600 px-2.5 py-1.5 rounded">高敏感易受影響</button>
                                     <button onclick="fillState('白天把時間都給了別人，只能靠『報復性熬夜』找回自由的疲憊靈魂')" class="tag-btn text-xs bg-white border border-stone-200 text-stone-600 px-2.5 py-1.5 rounded">報復性熬夜</button>
-                                    <button onclick="fillState('訊息跳出來就會莫須有心跳加速、感到壓力的社群焦慮者')" class="tag-btn text-xs bg-white border border-stone-200 text-stone-600 px-2.5 py-1.5 rounded">社群訊息焦慮</button>
+                                    <button onclick="fillState('訊息跳出來就會莫須心跳加速、感到壓力的社群焦慮者')" class="tag-btn text-xs bg-white border border-stone-200 text-stone-600 px-2.5 py-1.5 rounded">社群訊息焦慮</button>
                                 </div>
                             </div>
 
-                            <!-- 情境三：感情與界線 -->
                             <div>
                                 <span class="text-xs text-stone-400 block mb-1">🥀 情境三：感情與界線</span>
                                 <div class="flex flex-wrap gap-2">
@@ -139,333 +117,5 @@
                                 </div>
                             </div>
 
-                            <!-- 情境四：金錢與豐盛頻率 -->
                             <div>
-                                <span class="text-xs text-stone-400 block mb-1">💰 情境四：金錢與豐盛頻率</span>
-                                <div class="flex flex-wrap gap-2">
-                                    <button onclick="fillState('覺得賺錢很辛苦，只要花錢犒賞自己就會產生罪惡感的『匱乏體質』')" class="tag-btn text-xs bg-white border border-stone-200 text-stone-600 px-2.5 py-1.5 rounded">花錢有罪惡感</button>
-                                    <button onclick="fillState('正準備自己創業/接案，但對未知充滿恐懼、缺乏底氣的挑戰者')" class="tag-btn text-xs bg-white border border-stone-200 text-stone-600 px-2.5 py-1.5 rounded">創業/接案恐懼</button>
-                                    <button onclick="fillState('錢總是不知不覺流失，對未來的財務狀況感到極度焦慮的人')" class="tag-btn text-xs bg-white border border-stone-200 text-stone-600 px-2.5 py-1.5 rounded">財務極度焦慮</button>
-                                    <button onclick="fillState('想突破現有的舒適圈，但總是差臨門一腳行動力的拖延症患者')" class="tag-btn text-xs bg-white border border-stone-200 text-stone-600 px-2.5 py-1.5 rounded">缺乏行動力/拖延</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CTA 行動呼籲設定 -->
-                <div>
-                    <label class="block text-sm font-medium text-stone-600 mb-1">
-                        4. 行動呼籲 (CTA) / 導流文案
-                    </label>
-                    <input type="text" id="ctaText" placeholder="點擊下方標籤，或輸入引導文案..." class="w-full p-3 bg-[#f5f0eb] border border-[#e6dcd3] rounded-lg text-stone-800 input-focus-ring mb-3" value="🎁 生成專屬情境指南（將自動產生 LINE 回覆用筆記）">
-                    
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="fillCTA('🎁 生成專屬情境指南（將自動產生 LINE 回覆用筆記）')" class="text-xs bg-amber-50 border border-amber-200 text-amber-800 px-3 py-1.5 rounded-full hover:bg-amber-100 transition font-medium">✨ 自動生成貼文 + LINE 專屬指南</button>
-                        <button onclick="fillCTA('追蹤我，每天帶你認識一款能量礦石，為心靈充一點電 🤍')" class="text-xs bg-stone-100 border border-stone-200 text-stone-600 px-2.5 py-1.5 rounded hover:bg-stone-200 transition">💡 一般：每日追蹤</button>
-                        <button onclick="fillCTA('👉 點擊首頁連結，看更多適合此狀態的質感水晶組合')" class="text-xs bg-stone-100 border border-stone-200 text-stone-600 px-2.5 py-1.5 rounded hover:bg-stone-200 transition">🔗 一般：首頁導購</button>
-                    </div>
-                </div>
-
-                <button id="generateBtn" onclick="generateContent()" class="w-full mt-6 bg-[#8B8276] hover:bg-[#736B61] text-white font-medium py-3.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 shadow-sm">
-                    <i data-lucide="pen-tool" class="w-5 h-5"></i>
-                    開始生成專屬貼文
-                </button>
-            </div>
-
-            <div id="loadingState" class="hidden mt-8 flex flex-col items-center justify-center py-8">
-                <div class="loader-dots relative w-20 h-5">
-                    <div class="absolute top-0 w-3 h-3 rounded-full bg-stone-400"></div>
-                    <div class="absolute top-0 w-3 h-3 rounded-full bg-stone-400"></div>
-                    <div class="absolute top-0 w-3 h-3 rounded-full bg-stone-400"></div>
-                    <div class="absolute top-0 w-3 h-3 rounded-full bg-stone-400"></div>
-                </div>
-                <p class="text-stone-500 text-sm mt-4 tracking-wide">宇宙電波接收中，正在構思質感文案與專屬指南...</p>
-            </div>
-
-            <div id="errorState" class="hidden mt-8 p-4 bg-red-50 border border-red-100 rounded-lg flex items-start gap-3 text-red-700 text-sm">
-                <i data-lucide="alert-circle" class="w-5 h-5 shrink-0"></i>
-                <p id="errorText">發生錯誤，請稍後再試。</p>
-            </div>
-
-            <!-- 產出結果區塊 -->
-            <div id="resultArea" class="hidden mt-8 border-t border-stone-100 pt-6">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    
-                    <!-- Threads 貼文區 -->
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-sm font-medium text-stone-600 flex items-center gap-2">
-                                <i data-lucide="instagram" class="w-4 h-4 text-[#8B8276]"></i>
-                                Threads 貼文內容
-                            </h3>
-                            <button onclick="copyToClipboard('resultText', 'copyToastPost')" class="text-xs text-stone-600 hover:text-stone-800 flex items-center gap-1 transition-colors px-3 py-1.5 rounded-md bg-stone-100 border border-stone-200 hover:bg-stone-200 shadow-sm">
-                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                                複製貼文
-                            </button>
-                        </div>
-                        <div class="relative">
-                            <textarea id="resultText" readonly class="result-textarea w-full h-[550px] p-5 bg-[#FAFAFA] border border-stone-200 rounded-xl text-stone-700 text-[15px] focus:outline-none focus:ring-1 focus:ring-stone-300"></textarea>
-                            <div id="copyToastPost" class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-stone-800 text-white px-4 py-2 rounded shadow-lg text-sm opacity-0 transition-opacity duration-300 pointer-events-none">
-                                ✨ 貼文已複製！
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- LINE 指南區 -->
-                    <div id="guideArea" class="hidden">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-sm font-medium text-[#7c6a51] flex items-center gap-2">
-                                <i data-lucide="message-circle" class="w-4 h-4 text-[#7c6a51]"></i>
-                                後台：LINE 專屬指南 (自動回覆用)
-                            </h3>
-                            <button onclick="copyToClipboard('guideText', 'copyToastGuide')" class="text-xs text-[#7c6a51] hover:text-[#5c4e3c] flex items-center gap-1 transition-colors px-3 py-1.5 rounded-md bg-[#faf6f2] border border-[#e8dccb] hover:bg-[#f3eadf] shadow-sm">
-                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                                複製指南
-                            </button>
-                        </div>
-                        <div class="relative">
-                            <textarea id="guideText" readonly class="result-textarea w-full h-[550px] p-5 bg-[#faf6f2] border border-[#e8dccb] rounded-xl text-stone-700 text-[15px] focus:outline-none focus:ring-1 focus:ring-[#e8dccb]"></textarea>
-                            <div id="copyToastGuide" class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-stone-800 text-white px-4 py-2 rounded shadow-lg text-sm opacity-0 transition-opacity duration-300 pointer-events-none">
-                                ✨ 指南已複製！
-                            </div>
-                        </div>
-                        <p class="text-[11px] text-[#a3907a] mt-2 ml-1">💡 提示：將這段文字貼到 LINE 官方帳號的「自動回覆訊息」中，並設定對應的通關密語。</p>
-                    </div>
-
-                </div>
-            </div>
-            
-        </div>
-    </div>
-
-    <script>
-        lucide.createIcons();
-        
-        // 頁面載入時讀取瀏覽器儲存的金鑰
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedKey = localStorage.getItem('qiyi_gemini_key');
-            if(savedKey) {
-                document.getElementById('geminiApiKey').value = savedKey;
-            }
-        });
-
-        // 儲存金鑰功能
-        function saveApiKey() {
-            const key = document.getElementById('geminiApiKey').value.trim();
-            if(key) {
-                localStorage.setItem('qiyi_gemini_key', key);
-                alert('API Key 已安全儲存於此瀏覽器！');
-            } else {
-                localStorage.removeItem('qiyi_gemini_key');
-                alert('API Key 已清除。');
-            }
-        }
-
-        function fillState(text) {
-            document.getElementById('audienceState').value = text;
-            const input = document.getElementById('audienceState');
-            input.classList.add('bg-stone-100');
-            setTimeout(() => input.classList.remove('bg-stone-100'), 200);
-            
-            if(text.includes('什麼是') || text.includes('是真的嗎') || text.includes('是不是代表')) {
-                document.getElementById('postType').value = "知識型 (AIO科普，精準解答礦石現象/搜尋詞)";
-                if(text.includes('晶中晶')) document.getElementById('crystalType').value = "晶中晶";
-            } else {
-                const currentType = document.getElementById('postType').value;
-                if(currentType.includes("知識型")) {
-                    document.getElementById('postType').value = "價值型 (顧問建議，列出3-5點生活建議，提供解法)";
-                }
-                document.getElementById('crystalType').value = ""; 
-            }
-        }
-
-        function fillCTA(text) {
-            document.getElementById('ctaText').value = text;
-            const input = document.getElementById('ctaText');
-            input.classList.add('bg-stone-100');
-            setTimeout(() => input.classList.remove('bg-stone-100'), 200);
-        }
-
-        function copyToClipboard(elementId, toastId) {
-            const resultText = document.getElementById(elementId);
-            resultText.select();
-            resultText.setSelectionRange(0, 99999); 
-            try {
-                document.execCommand('copy');
-                const toast = document.getElementById(toastId);
-                toast.classList.remove('opacity-0');
-                setTimeout(() => toast.classList.add('opacity-0'), 2000);
-            } catch (err) {
-                alert('複製失敗，請手動全選複製。');
-            }
-            window.getSelection().removeAllRanges();
-        }
-
-        async function fetchWithRetry(url, options, retries = 5) {
-            let delay = 1000;
-            for (let i = 0; i < retries; i++) {
-                try {
-                    const response = await fetch(url, options);
-                    if (!response.ok) throw new Error(`API 錯誤: ${response.status}`);
-                    return await response.json();
-                } catch (e) {
-                    if (i === retries - 1) throw e;
-                    await new Promise(res => setTimeout(res, delay));
-                    delay *= 2; 
-                }
-            }
-        }
-
-        async function generateContent() {
-            const btn = document.getElementById('generateBtn');
-            const loading = document.getElementById('loadingState');
-            const resultArea = document.getElementById('resultArea');
-            const guideArea = document.getElementById('guideArea');
-            const resultText = document.getElementById('resultText');
-            const guideText = document.getElementById('guideText');
-            const errorState = document.getElementById('errorState');
-            
-            const postType = document.getElementById('postType').value;
-            const audienceState = document.getElementById('audienceState').value.trim();
-            const crystalType = document.getElementById('crystalType').value.trim() || '請推薦一款適合該情境的特色礦石。';
-            const ctaText = document.getElementById('ctaText').value.trim();
-
-            // 新增：取得金鑰並驗證
-            const apiKey = document.getElementById('geminiApiKey').value.trim();
-            
-            if (!apiKey) {
-                showError('請先在右上角輸入並儲存您的 Gemini API Key！');
-                return;
-            }
-
-            if (!audienceState) {
-                showError('請輸入或選擇欄位內容！');
-                return;
-            }
-
-            const needsGuide = ctaText.includes('指南') || ctaText.includes('筆記') || ctaText.includes('領取');
-
-            btn.disabled = true;
-            btn.classList.add('opacity-70', 'cursor-not-allowed');
-            loading.classList.remove('hidden');
-            resultArea.classList.add('hidden');
-            guideArea.classList.add('hidden');
-            errorState.classList.add('hidden');
-
-            let structureRules = `
-【Threads 貼文排版規則】：
-- 每段最多 1 到 2 句話就必須換行，每句話不超過 20 個字。
-- 段落與段落之間必須「空一行」。
-`;
-
-            if (postType.includes("知識型")) {
-                structureRules += `
-【知識型內容結構】：
-1. 搜尋破題：開頭命中常見疑問。
-2. 極簡科普：最白話解釋。
-3. 能量轉譯：轉譯為心理狀態。
-4. 動態指南(3~5項)：適合配戴的人群。
-5. 互動與去罪惡感。
-`;
-            } else {
-                structureRules += `
-【一般陪伴型內容結構】：
-1. 標籤化受眾：精準點出痛點狀態。
-2. 動態清單(3~5項)：極簡生活清單，結合水晶。
-3. 去罪惡感陪伴。
-4. 預告互動。
-`;
-            }
-
-            // 強化 LINE 指南的排版邏輯
-            if (needsGuide) {
-                structureRules += `
-【🚀 強制觸發任務：同步生成貼文與 LINE 指南】：
-第一部分：寫出 Threads 貼文。
-- 在貼文最末段，自動發想一個與主題相關的指南名稱及通關密語。例如：「QIYI Crystal 官方 Line輸入「好眠」，免費領取【高敏人睡前降噪指南】」。
-
-第二部分：生成 LINE 指南的實際內容！
-- 在貼文寫完後，換行並嚴格輸出「=== LINE指南 ===」七個字作為分隔線。
-- 分隔線下方撰寫指南內容。
-- 🌟【LINE 指南專屬極致排版規則 (非常重要)】🌟：
-  * 絕對不要寫成密密麻麻的文字區塊！
-  * 開場白、每個建議項目、結語之間，都「必須空兩行 (換行兩次)」。
-  * 每個建議的標題，請使用【】括號或適當的 Emoji 標示，讓視覺有重點。
-  * 建議的說明文字，也請適當斷句，一行不要太長，讀起來要有呼吸感。
-- 指南內容包含：
-  1. 溫柔的開場白感謝索取。
-  2. 3 個比貼文更進階的實作方法或礦石搭配法。
-  3. 溫暖的結語。
-`;
-            } else {
-                structureRules += `
-【行動呼籲】：貼文最後一行加上指定的 CTA 文案：${ctaText}
-`;
-            }
-
-            const systemPrompt = `你現在是「QIYI Crystal」水晶店的品牌內容總監。品牌風格類似 MUJI，強調極簡、質感、不怪力亂神。
-注意：直接輸出純文字，絕對不要使用 markdown 語法(如 \`\`\`)。
-
-${structureRules}`;
-
-            let userPromptText = `請寫出貼文：\n- 類型：${postType}\n- 讀者痛點：${audienceState}\n- 推薦水晶：${crystalType}`;
-            if (needsGuide) {
-                userPromptText += `\n- 請生成關聯的「LINE專屬領取指南」，記得加上 === LINE指南 === 分隔線，並嚴格遵守 LINE 的極致空行排版規則。`;
-            }
-
-            try {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-                
-                const payload = {
-                    contents: [{ parts: [{ text: userPromptText }] }],
-                    systemInstruction: { parts: [{ text: systemPrompt }] },
-                    generationConfig: { temperature: 0.8 } 
-                };
-
-                const data = await fetchWithRetry(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (data && data.candidates && data.candidates[0].content.parts[0].text) {
-                    let generatedContent = data.candidates[0].content.parts[0].text;
-                    generatedContent = generatedContent.replace(/```[a-z]*\n?/gi, '').replace(/```/g, '').trim();
-                    
-                    if (needsGuide && generatedContent.includes('=== LINE指南 ===')) {
-                        let parts = generatedContent.split('=== LINE指南 ===');
-                        resultText.value = parts[0].trim();
-                        // 確保指南區塊的頭尾沒有多餘空白
-                        guideText.value = parts[1].trim();
-                        guideArea.classList.remove('hidden');
-                        document.querySelector('#resultArea .grid').classList.replace('grid-cols-1', 'lg:grid-cols-2');
-                    } else {
-                        resultText.value = generatedContent;
-                        guideArea.classList.add('hidden');
-                        document.querySelector('#resultArea .grid').classList.replace('lg:grid-cols-2', 'grid-cols-1');
-                    }
-
-                    resultArea.classList.remove('hidden');
-
-                } else {
-                    throw new Error("無法解析回應。");
-                }
-
-            } catch (error) {
-                console.error(error);
-                showError("無法連線到 AI 引擎，請稍後再試。");
-            } finally {
-                btn.disabled = false;
-                btn.classList.remove('opacity-70', 'cursor-not-allowed');
-                loading.classList.add('hidden');
-            }
-        }
-
-        function showError(msg) {
-            document.getElementById('errorText').innerText = msg;
-            document.getElementById('errorState').classList.remove('hidden');
-        }
-    </script>
-</body>
-</html>
+                                <span class="text-xs text-stone-400 block mb-1">💰 情境四
