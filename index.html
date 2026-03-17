@@ -302,12 +302,24 @@
             window.getSelection().removeAllRanges();
         }
 
+        // 修改後的 fetchWithRetry，強化擷取錯誤訊息的邏輯
         async function fetchWithRetry(url, options, retries = 5) {
             let delay = 1000;
             for (let i = 0; i < retries; i++) {
                 try {
                     const response = await fetch(url, options);
-                    if (!response.ok) throw new Error(`API 錯誤: ${response.status}`);
+                    if (!response.ok) {
+                        let errorMsg = `HTTP 錯誤碼: ${response.status}`;
+                        try {
+                            const errData = await response.json();
+                            if (errData.error && errData.error.message) {
+                                errorMsg = `API 回傳錯誤: ${errData.error.message}`;
+                            }
+                        } catch (parseErr) {
+                            // 若無法解析 json 則忽略
+                        }
+                        throw new Error(errorMsg);
+                    }
                     return await response.json();
                 } catch (e) {
                     if (i === retries - 1) throw e;
@@ -331,12 +343,23 @@
             const crystalType = document.getElementById('crystalType').value.trim() || '請推薦一款適合該情境的特色礦石。';
             const ctaText = document.getElementById('ctaText').value.trim();
 
-            // 新增：取得金鑰並驗證
-            const apiKey = document.getElementById('geminiApiKey').value.trim();
+            // 🌟【環境智慧偵測】🌟
+            // 判斷是在目前的「預覽畫面」還是已經上架到「GitHub Pages」
+            const isPreviewEnv = window.location.hostname.includes('usercontent.goog') || window.location.href.startsWith('blob:');
             
-            if (!apiKey) {
-                showError('請先在右上角輸入並儲存您的 Gemini API Key！');
-                return;
+            let finalModel = 'gemini-1.5-flash'; // GitHub 用的公開穩定模型
+            let finalApiKey = document.getElementById('geminiApiKey').value.trim(); // 使用者輸入的金鑰
+
+            if (isPreviewEnv) {
+                // 若在預覽畫面中，強制使用預覽專屬模型與系統環境金鑰
+                finalModel = 'gemini-2.5-flash-preview-09-2025';
+                finalApiKey = ''; 
+            } else {
+                // 若在 GitHub Pages，則檢查金鑰是否已輸入
+                if (!finalApiKey) {
+                    showError('請先在右上角輸入並儲存您的 Gemini API Key！');
+                    return;
+                }
             }
 
             if (!audienceState) {
@@ -378,7 +401,6 @@
 `;
             }
 
-            // 強化 LINE 指南的排版邏輯
             if (needsGuide) {
                 structureRules += `
 【🚀 強制觸發任務：同步生成貼文與 LINE 指南】：
@@ -415,12 +437,13 @@ ${structureRules}`;
             }
 
             try {
-                // 將模型改為目前免費額度最廣、最穩定且支援一般 API Key 的 gemini-1.5-flash
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+                // 動態套用模型與金鑰
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${finalModel}:generateContent?key=${finalApiKey}`;
                 
+                // 修正了 payload 的格式，明確加上 role: "user" 與 role: "system"
                 const payload = {
-                    contents: [{ parts: [{ text: userPromptText }] }],
-                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    contents: [{ role: "user", parts: [{ text: userPromptText }] }],
+                    systemInstruction: { role: "system", parts: [{ text: systemPrompt }] },
                     generationConfig: { temperature: 0.8 } 
                 };
 
@@ -437,7 +460,6 @@ ${structureRules}`;
                     if (needsGuide && generatedContent.includes('=== LINE指南 ===')) {
                         let parts = generatedContent.split('=== LINE指南 ===');
                         resultText.value = parts[0].trim();
-                        // 確保指南區塊的頭尾沒有多餘空白
                         guideText.value = parts[1].trim();
                         guideArea.classList.remove('hidden');
                         document.querySelector('#resultArea .grid').classList.replace('grid-cols-1', 'lg:grid-cols-2');
@@ -450,12 +472,13 @@ ${structureRules}`;
                     resultArea.classList.remove('hidden');
 
                 } else {
-                    throw new Error("無法解析回應。");
+                    throw new Error("無法解析回應格式異常。");
                 }
 
             } catch (error) {
-                console.error(error);
-                showError("無法連線到 AI 引擎，請稍後再試。");
+                console.error("執行錯誤:", error);
+                // 這裡現在會顯示更詳細具體的 API 錯誤訊息
+                showError(error.message || "無法連線到 AI 引擎，請稍後再試。");
             } finally {
                 btn.disabled = false;
                 btn.classList.remove('opacity-70', 'cursor-not-allowed');
